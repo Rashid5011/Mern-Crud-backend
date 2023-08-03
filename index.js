@@ -4,11 +4,19 @@ const cors = require("cors");
 const UserModel = require("./model/Users");
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://deploy-mern-1whq.vercel.app"],
+    methods: ["POST", "GET", "DELETE", "PUT"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/crud")
+  .connect(
+    "mongodb+srv://risshi2323:%40Rash0025@cluster0.cuqujry.mongodb.net/crudmern"
+  )
   .then(() => console.log("connected"))
   .catch((err) => console.log("error:", err));
 
@@ -25,14 +33,14 @@ app.get("/", (req, res) => {
 app.delete("/deleteUser/:id", (req, res) => {
   const id = req.params.id;
   UserModel.findByIdAndDelete({ _id: id })
-    .then((res) => {
-      res.json(res);
+    .then((deletedUser) => {
+      // Change variable name from res to deletedUser
+      res.json(deletedUser);
     })
     .catch((err) => {
       console.log(err);
     });
 });
-
 app.post("/createuser", (req, res) => {
   UserModel.create(req.body)
     .then((user) => {
@@ -63,10 +71,11 @@ app.put("/updateUser/:id", (req, res) => {
       email: req.body.email,
       age: req.body.age,
     },
-    { new: true } // To get the updated user document
+    { new: true }
   )
-    .then((user) => {
-      res.json(user);
+    .then((updatedUser) => {
+      // Change variable name from res to updatedUser
+      res.json(updatedUser);
     })
     .catch((err) => {
       console.log(err);
